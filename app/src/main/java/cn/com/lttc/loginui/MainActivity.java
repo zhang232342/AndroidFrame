@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,6 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import utils.HttpLogin;
+import utils.PathName;
 import utils.PostUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener, ViewTreeObserver.OnGlobalLayoutListener, TextWatcher {
@@ -469,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SharedPreferences.Editor ed = sp.edit();
                     //tokens保存到本地
                     ed.putString("tokens", tokens);
-                    if("SUCCESS".equals(result)){
+                    if(PathName.SUCCESS.equals(result)){
                      startActivity(new Intent(MainActivity.this, MenuActivity.class));
                     }
                     ed.commit();
