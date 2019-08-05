@@ -466,15 +466,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String result = jsonObject.getString("name");
                     String tokens = jsonObject.getString("value");
                     //创建sharedPreference对象，tokens表示文件名，MODE_PRIVATE表示访问权限为私有的
-                    SharedPreferences sp = getSharedPreferences("tokens", MODE_PRIVATE);
+                    SharedPreferences sp = getSharedPreferences("token", MODE_PRIVATE);
                     //获得sp的编辑器
                     SharedPreferences.Editor ed = sp.edit();
                     //tokens保存到本地
                     ed.putString("tokens", tokens);
+                    ed.commit();
+                    Log.d("tokens：",tokens);
                     if(PathName.SUCCESS.equals(result)){
                      startActivity(new Intent(MainActivity.this, MenuActivity.class));
                     }
-                    ed.commit();
+
                     Log.d("返回值解析后：",result);
                 } catch (JSONException e) {
                     e.printStackTrace();

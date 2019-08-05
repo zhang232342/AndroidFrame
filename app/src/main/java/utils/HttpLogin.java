@@ -14,9 +14,13 @@ import java.net.URLEncoder;
 
 import cn.com.lttc.loginui.MainActivity;
 
+import static android.content.Context.MODE_PRIVATE;
+import static java.lang.System.in;
+
 
 public class HttpLogin {
     private static String LOGIN_URL =  PathName.PATH_ADDRESS;
+    private static String PERMSG_URL =  PathName.PER_MSG;
     private static SharedPreferences preference;
     private static SharedPreferences.Editor editor;
     public static String LoginByPost(String username,String passwd){
@@ -77,6 +81,41 @@ public class HttpLogin {
 
                 return msg;
             }
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d(MainActivity.TAG,"exit");
+        return msg;
+    }
+
+    public static String QueryPerMsg(SharedPreferences pre){
+        Log.d(MainActivity.TAG,"启动查询个人信息线程");
+        String msg = "";
+        try {
+            //初始化URL
+            URL url = new URL(PERMSG_URL);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            //设置请求方式
+            con.setRequestMethod("GET");
+            //注意，把存在本地的cookie值加在请求头上
+            con.setRequestProperty("Cookie", pre.getString("tokens", ""));
+            String token = pre.getString("tokens", "");
+            Log.d("tok",token);
+            InputStream is=con.getInputStream();
+            ByteArrayOutputStream bos=new ByteArrayOutputStream();
+            byte[]buffer=new byte[1024];
+            int len=0;
+            while((len=is.read(buffer))>0){
+                bos.write(buffer,0,len);
+            }
+            bos.flush();
+            is.close();
+            byte []result=bos.toByteArray();
+             msg = new String(result);
+             return msg;
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
