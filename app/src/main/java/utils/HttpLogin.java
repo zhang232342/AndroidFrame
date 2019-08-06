@@ -102,8 +102,6 @@ public class HttpLogin {
             con.setRequestMethod("GET");
             //注意，把存在本地的cookie值加在请求头上
             con.setRequestProperty("Cookie", pre.getString("tokens", ""));
-            String token = pre.getString("tokens", "");
-            Log.d("tok",token);
             InputStream is=con.getInputStream();
             ByteArrayOutputStream bos=new ByteArrayOutputStream();
             byte[]buffer=new byte[1024];

@@ -22,7 +22,7 @@ import utils.HttpLogin;
 import utils.PathName;
 
 public class SettingFragment  extends Fragment {
-    //四个Tab对应的ImageButton
+    //按钮
     private Button mPerMsgBut;//个人信息按钮
     private Button mExitBut;//退出按钮
     @Nullable
@@ -58,15 +58,25 @@ public class SettingFragment  extends Fragment {
                     Log.d("1",str);
                     Log.d("返回值",str);
                     Log.d("结束","结束查询");
+                    Bundle bundle = new Bundle();
+                    bundle.putString("result",str);
+                    Message msg = new Message();
+                    msg.setData(bundle);
+                    JSONObject jsonObject = new JSONObject(str);
+                    String status = jsonObject.getString("status");
+                    if(PathName.SUCCESS.equals(status)){
+                    String account = jsonObject.getString("account");
+                    String nickName = jsonObject.getString("nick_name");
+                    Intent intent = new Intent(getActivity(),PerMsgActivity.class);
+                    //用Bundle携带数据
+                    Bundle bundles=new Bundle();
+                    //传递参数
+                    bundles.putString("account", account);
+                    bundles.putString("nickName", nickName);
+                    intent.putExtras(bundles);
+                    startActivity(intent);
+                    }
 
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("result",str);
-//                    Message msg = new Message();
-//                    msg.setData(bundle);
-//                    JSONObject jsonObject = new JSONObject(str);
-//                    String result = jsonObject.getString("name");
-//                    String tokens = jsonObject.getString("value");
-//                    Log.d("返回值解析后：",result);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

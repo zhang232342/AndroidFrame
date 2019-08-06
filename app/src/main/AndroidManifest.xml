@@ -56,6 +56,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/Account_Base.App.Theme.NoTitle"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".PerMsgActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="个人页面"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Account_Base.App.Theme.NoTitle"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
     </application>
 
 </manifest>
