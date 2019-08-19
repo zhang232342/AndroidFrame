@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import zxing.android.CaptureActivity;
+import zxing.bean.ZxingConfig;
 import zxing.common.Constant;
 
 
@@ -60,13 +61,13 @@ public class FirstFragment extends Fragment {
          * 不传的话  默认都为默认不震动  其他都为true
          * */
 
-        //ZxingConfig config = new ZxingConfig();
-        //config.setShowbottomLayout(true);//底部布局（包括闪光灯和相册）
-        //config.setPlayBeep(true);//是否播放提示音
+        ZxingConfig config = new ZxingConfig();
+        config.setShowbottomLayout(true);//底部布局（包括闪光灯和相册）
+        config.setPlayBeep(true);//是否播放提示音
         //config.setShake(true);//是否震动
-        //config.setShowAlbum(true);//是否显示相册
-        //config.setShowFlashLight(true);//是否显示闪光灯
-        //intent.putExtra(Constant.INTENT_ZXING_CONFIG, config);
+        config.setShowAlbum(true);//是否显示相册
+        config.setShowFlashLight(true);//是否显示闪光灯
+        intent.putExtra(Constant.INTENT_ZXING_CONFIG, config);
         getActivity().startActivityForResult(intent, 1111);
     }
 
@@ -76,7 +77,13 @@ public class FirstFragment extends Fragment {
         if (requestCode == 1111) {
             if (data != null) {
                 String content = data.getStringExtra(Constant.CODED_CONTENT);
-                Toast.makeText(getActivity(), content, Toast.LENGTH_LONG).show();
+                Intent intents = new Intent(getActivity(),ResultActivity.class);
+                //用Bundle携带数据
+                Bundle bundles=new Bundle();
+                //传递参数
+                bundles.putString("content", content);
+                intents.putExtras(bundles);
+                startActivity(intents);
             }
         }
     }

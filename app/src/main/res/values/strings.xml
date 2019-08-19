@@ -27,11 +27,11 @@
     <string name="reset_pwd_submit">确认</string>
     <string name="message_pwd_error">密码错误</string>
     <string name="message_username_null">用户名未填写！！！</string>
-    <string name="msg_camera_framework_bug">The camera is occupied or has no camera permission, please check</string>
-    <string name="button_ok">Exit</string>
-    <string name="scan_code">Scan QR Code</string>
-    <string name="open_flash">Turn on the flash</string>
-    <string name="close_flash">Turn off the flash</string>
-    <string name="gallery">Gallery</string>
-    <string name="scan_failed_tip">Scan image failed, please retry.</string>
+    <string name="msg_camera_framework_bug">摄像头被占用或没有摄像头权限，请检查</string>
+    <string name="button_ok">退出</string>
+    <string name="scan_code">扫一扫</string>
+    <string name="open_flash">打开闪光灯</string>
+    <string name="close_flash">关闭闪光灯</string>
+    <string name="gallery">相册</string>
+    <string name="scan_failed_tip">扫描图像失败，请重试</string>
 </resources>
