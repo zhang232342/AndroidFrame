@@ -45,6 +45,14 @@ public class SettingFragment  extends Fragment {
 
             }
         });
+        mExitBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "success", Toast.LENGTH_LONG).show();
+                exitActivity();
+
+            }
+        });
 
     }
     public void queryPer(){//查询个人信息方法
@@ -82,5 +90,9 @@ public class SettingFragment  extends Fragment {
                 }
             }
         }).start();
+    }
+    public void exitActivity(){
+        //退出
+        getActivity().onBackPressed();
     }
 }
