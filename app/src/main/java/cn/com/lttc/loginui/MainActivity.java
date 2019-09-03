@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,8 +36,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main_login);
         initView();
         readAccount();
+        new NetPing().execute();
     }
     //读取保存在本地的用户名和密码
     public void readAccount() {
@@ -432,6 +436,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     //登录
     private void loginRequest() {
+        String flag = Ping(PathName.PATH_URL);
+        if("faild".equals(flag)){
+            System.out.println("进入方法" );
+            Toast.makeText(MainActivity.this, "登陆异常，服务器无法连接", Toast.LENGTH_LONG).show();
+
+        }else{
         //获取输入的用户名和密码
         String username = mEtLoginUsername.getText().toString().trim();
         String pwd = mEtLoginPwd.getText().toString().trim();
@@ -475,14 +485,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("tokens：",tokens);
                     if(PathName.SUCCESS.equals(result)){
                      startActivity(new Intent(MainActivity.this, MenuActivity.class));
+                    }else{
+                        Toast.makeText(MainActivity.this, "登陆异常，服务器无法连接", Toast.LENGTH_SHORT);
                     }
 
                     Log.d("返回值解析后：",result);
                 } catch (JSONException e) {
                     e.printStackTrace();
+
                 }
             }
-        }).start();
+        }).start();}
     }
 
     //微博登录
@@ -514,4 +527,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mToast.show();
     }
+    public String Ping(String str) {
+        String resault = "";
+        Process p;
+        try {
+            //ping -c 3 -w 100  中  ，-c 是指ping的次数 3是指ping 3次 ，-w 100  以秒为单位指定超时间隔，是指超时时间为100秒
+            p = Runtime.getRuntime().exec("ping -c 3 -w 100 " + str);
+            int status = p.waitFor();
+
+            InputStream input = p.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(input));
+            StringBuffer buffer = new StringBuffer();
+            String line = "";
+            while ((line = in.readLine()) != null){
+                buffer.append(line);
+            }
+            System.out.println("Return ============" + buffer.toString());
+
+            if (status == 0) {
+                resault = "success";
+            } else {
+                resault = "faild";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        return resault;
+    }
+
+    private class NetPing extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String s = "";
+            s = Ping(PathName.PATH_URL);
+            Log.i("ping", s);
+            return s;
+        }
+    }
+
 }
