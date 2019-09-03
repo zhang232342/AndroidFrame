@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initView();
         readAccount();
         new NetPing().execute();
+        canUpdate();
 
     }
     //读取保存在本地的用户名和密码
@@ -586,14 +587,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Boolean flag = checkOnlineVersion();
         if(flag==false){
             AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle
-                    ("Tips").setMessage("Have new version,please update!")
-                    .setNeutralButton("Cancel", new DialogInterface
+                    ("更新").setMessage("获取到新版本,请更新!")
+                    .setNeutralButton("取消", new DialogInterface
                             .OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                         }
-                    }).setNegativeButton("Update", new DialogInterface
+                    }).setNegativeButton("更新", new DialogInterface
                             .OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
