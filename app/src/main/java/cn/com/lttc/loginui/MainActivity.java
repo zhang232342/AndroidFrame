@@ -3,16 +3,26 @@ package cn.com.lttc.loginui;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -37,6 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,6 +59,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import utils.APKVersionCodeUtils;
+import utils.DownLoadUtils;
 import utils.HttpLogin;
 import utils.PathName;
 import utils.PostUtils;
@@ -56,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public  static final String TAG = "MainActivity";
     private MyHandler myhandler = new MyHandler(this);
-
+    private BroadcastReceiver broadcastReceiver;
     private ImageButton mIbNavigationBack;
     private LinearLayout mLlLoginPull;
     private View mLlLoginLayer;
@@ -84,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initView();
         readAccount();
         new NetPing().execute();
+
     }
     //读取保存在本地的用户名和密码
     public void readAccount() {
@@ -567,6 +581,89 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i("ping", s);
             return s;
         }
+    }
+    private void canUpdate(){
+        Boolean flag = checkOnlineVersion();
+        if(flag==false){
+            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle
+                    ("Tips").setMessage("Have new version,please update!")
+                    .setNeutralButton("Cancel", new DialogInterface
+                            .OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).setNegativeButton("Update", new DialogInterface
+                            .OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            DownLoadUtils.downLoadApk(MainActivity.this,"",PathName.DOWNLOAD_PATH_URL);
+                        }
+                    }).show();
+            dialog.setCanceledOnTouchOutside(false);//可选
+            dialog.setCancelable(false);//可选
+        }
+    }
+    //获取线上版本与本地对比
+    private Boolean checkOnlineVersion(){
+        //本地版本号
+        String versionCode = APKVersionCodeUtils.getVersionCode(this) + "";
+        Log.d("版本号：",versionCode);
+        return false;
+    }
+    private void listener(final long Id) {
+        // 注册广播监听系统的下载完成事件。
+        IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                DownloadManager manager = (DownloadManager)context.getSystemService(Context.DOWNLOAD_SERVICE);
+           // 这里是通过下面这个方法获取下载的id，
+                long ID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                // 这里把传递的id和广播中获取的id进行对比是不是我们下载apk的那个id，如果是的话，就开始获取这个下载的路径
+                if (ID == Id) {
+
+                    DownloadManager.Query query = new DownloadManager.Query();
+                    query.setFilterById(Id);
+
+                    Cursor cursor = manager.query(query);
+                    if (cursor.moveToFirst()){
+                        // 获取文件下载路径
+                        String fileName = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+
+                        // 如果文件名不为空，说明文件已存在,则进行自动安装apk
+                        if (fileName != null){
+
+                            openAPK(fileName);
+
+                        }
+                    }
+                    cursor.close();
+                }
+            }
+        };
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+    /**
+     * 安装apk
+     * @param fileSavePath
+     */
+    private void openAPK(String fileSavePath){
+        File file=new File(Uri.parse(fileSavePath).getPath());
+        String filePath = file.getAbsolutePath();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri data = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//判断版本大于等于7.0
+            // 生成文件的uri，，
+       // 注意 下面参数com.ausee.fileprovider 为apk的包名加上.fileprovider，
+            data = FileProvider.getUriForFile(MainActivity.this, "cn.com.lttc.loginui.fileprovider", new File(filePath));
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);// 给目标应用一个临时授权
+        } else {
+            data = Uri.fromFile(file);
+        }
+
+        intent.setDataAndType(data, "application/vnd.android.package-archive");
+        startActivity(intent);
     }
 
 }
