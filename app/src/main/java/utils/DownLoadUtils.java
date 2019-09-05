@@ -12,7 +12,7 @@ public class DownLoadUtils {
 
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
-        request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS,"ausee.apk");
+        request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS,"ausee.apk");//程序apk 名称 可以调整
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         // 设置 Notification 信息
         request.setTitle(title);
